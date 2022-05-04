@@ -10,7 +10,7 @@ Add the installation instructions.
 
 # Changelog
 
--   [#1 - Add a link to each pull request with a descriptive line.](#1)
+-   First (proper) pull requset (https://github.com/h-emma/our-game/pull/2)
 
 # Code Review
 
