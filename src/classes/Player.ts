@@ -2,13 +2,10 @@ import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class Player extends PhysicObject {
-  position: Vector2;
   sprite: Sprite;
 
-  constructor(position: Vector2, img: string, radius: number) {
-    super(position);
-    this.position = position;
-    this.moveVector = { x: 0, y: 0 };
+  constructor(position: Vector2, radius: number, img: string) {
+    super(position, radius);
     this.sprite = Sprite.from(img);
     this.sprite.width = radius * 2;
     this.sprite.height = radius * 2;
@@ -17,7 +14,7 @@ export class Player extends PhysicObject {
 
   addEventListeners() {
     window.addEventListener('keydown', (e) => {
-      this.motion(e.key, 0.5);
+      this.motion(e.key, Math.random() * 0.05 + 0.5);
     });
   }
 
@@ -35,6 +32,28 @@ export class Player extends PhysicObject {
       case 'ArrowRight':
         this.addForce({ x: power, y: 0 });
         break;
+    }
+  }
+
+  checkBorders(bounceForce) {
+    let hitBorder = false;
+    if (this.position.x <= 0) {
+      this.moveVector.x = Math.abs(this.moveVector.x);
+      hitBorder = true;
+    } else if (this.position.x + this.radius * 2 >= 1200) {
+      this.moveVector.x = -Math.abs(this.moveVector.x);
+      hitBorder = true;
+    } else if (this.position.y <= 0) {
+      this.moveVector.y = Math.abs(this.moveVector.y);
+      hitBorder = true;
+    } else if (this.position.y + this.radius * 2 >= 800) {
+      this.moveVector.y = -Math.abs(this.moveVector.y);
+
+      hitBorder = true;
+    }
+    if (hitBorder) {
+      this.moveVector.x *= 0.6;
+      this.moveVector.y *= 0.6;
     }
   }
 
