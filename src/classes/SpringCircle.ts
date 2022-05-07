@@ -1,36 +1,25 @@
 import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
-export class Player extends PhysicObject {
-  constructor(position: Vector2, radius: number, img: string) {
+export class SpringCircle extends PhysicObject {
+  anchorPos: Vector2;
+  springForceMultiplier: number;
+  damp: number;
+
+  constructor(
+    position: Vector2,
+    radius: number,
+    img: string,
+    springForceMultiplier: number,
+    damp: number
+  ) {
     super(position, radius, img);
     this.sprite = Sprite.from(img);
     this.sprite.width = radius * 2;
     this.sprite.height = radius * 2;
-    this.addEventListeners();
-  }
-
-  addEventListeners() {
-    window.addEventListener('keydown', (e) => {
-      this.motion(e.key, Math.random() * 0.05 + 0.5);
-    });
-  }
-
-  motion(key: string, power: number): void {
-    switch (key) {
-      case 'ArrowUp':
-        this.addForce({ x: 0, y: -power });
-        break;
-      case 'ArrowDown':
-        this.addForce({ x: 0, y: power });
-        break;
-      case 'ArrowLeft':
-        this.addForce({ x: -power, y: 0 });
-        break;
-      case 'ArrowRight':
-        this.addForce({ x: power, y: 0 });
-        break;
-    }
+    this.anchorPos = { x: position.x, y: position.y };
+    this.springForceMultiplier = springForceMultiplier;
+    this.damp = damp;
   }
 
   checkBorders(bounceDamp: number) {
@@ -46,12 +35,29 @@ export class Player extends PhysicObject {
       hitBorder = true;
     } else if (this.position.y + this.radius * 2 >= 800) {
       this.moveVector.y = -Math.abs(this.moveVector.y);
-
       hitBorder = true;
     }
     if (hitBorder) {
       this.moveVector.x *= bounceDamp;
       this.moveVector.y *= bounceDamp;
+    }
+  }
+
+  spring() {
+    const deltaV: Vector2 = {
+      x: this.anchorPos.x - this.position.x,
+      y: this.anchorPos.y - this.position.y,
+    };
+    const magnitude: number = Math.sqrt(
+      deltaV.x * deltaV.x + deltaV.y * deltaV.y
+    );
+    const dir: Vector2 = { x: deltaV.x / magnitude, y: deltaV.y / magnitude };
+    const forceV = {
+      x: dir.x * magnitude * this.springForceMultiplier * this.damp,
+      y: dir.y * magnitude * this.springForceMultiplier * this.damp,
+    };
+    if (magnitude !== 0) {
+      this.addForce(forceV);
     }
   }
 
@@ -61,6 +67,9 @@ export class Player extends PhysicObject {
   }
 
   updatePosition() {
+    this.spring(this.springForceMultiplier);
+    this.moveVector.x *= this.damp;
+    this.moveVector.y *= this.damp;
     this.position.x += this.moveVector.x;
     this.position.y += this.moveVector.y;
     this.sprite.position.x = this.position.x;
