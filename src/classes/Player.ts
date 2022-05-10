@@ -2,10 +2,8 @@ import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class Player extends PhysicObject {
-  sprite: Sprite;
-
-  constructor(position: Vector2, radius: number, img: string) {
-    super(position, radius);
+  constructor(position: Vector2, radius: number, img: string, mass: number) {
+    super(position, radius, img, mass);
     this.sprite = Sprite.from(img);
     this.sprite.width = radius * 2;
     this.sprite.height = radius * 2;
@@ -35,7 +33,7 @@ export class Player extends PhysicObject {
     }
   }
 
-  checkBorders(bounceForce) {
+  checkBorders(bounceDamp: number) {
     let hitBorder = false;
     if (this.position.x <= 0) {
       this.moveVector.x = Math.abs(this.moveVector.x);
@@ -52,8 +50,8 @@ export class Player extends PhysicObject {
       hitBorder = true;
     }
     if (hitBorder) {
-      this.moveVector.x *= 0.6;
-      this.moveVector.y *= 0.6;
+      this.moveVector.x *= bounceDamp;
+      this.moveVector.y *= bounceDamp;
     }
   }
 
@@ -67,5 +65,9 @@ export class Player extends PhysicObject {
     this.position.y += this.moveVector.y;
     this.sprite.position.x = this.position.x;
     this.sprite.position.y = this.position.y;
+  }
+
+  collisionTint(): void {
+    this.tintCounter = 1;
   }
 }
