@@ -1,4 +1,4 @@
-import { Sprite } from 'pixi.js';
+import { Sprite, utils, filters } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class SpringCircle extends PhysicObject {
@@ -10,10 +10,11 @@ export class SpringCircle extends PhysicObject {
     position: Vector2,
     radius: number,
     img: string,
+    mass: number,
     springForceMultiplier: number,
     damp: number
   ) {
-    super(position, radius, img);
+    super(position, radius, img, mass);
     this.sprite = Sprite.from(img);
     this.sprite.width = radius * 2;
     this.sprite.height = radius * 2;
@@ -67,12 +68,28 @@ export class SpringCircle extends PhysicObject {
   }
 
   updatePosition() {
-    this.spring(this.springForceMultiplier);
+    this.spring();
     this.moveVector.x *= this.damp;
     this.moveVector.y *= this.damp;
     this.position.x += this.moveVector.x;
     this.position.y += this.moveVector.y;
     this.sprite.position.x = this.position.x;
     this.sprite.position.y = this.position.y;
+  }
+
+  collisionTint(): void {
+    if (this.tintCounter > 0) {
+      this.sprite.tint = utils.rgb2hex([
+        this.clamp(this.tintCounter, 0.5, 1),
+        this.clamp(this.tintCounter, 0.5, 1),
+        this.clamp(this.tintCounter, 0.5, 1),
+      ]);
+    } else {
+      this.sprite.tint = 0x999999;
+    }
+  }
+
+  clamp(number: number, min: number, max: number): number {
+    return Math.max(min, Math.min(number, max));
   }
 }

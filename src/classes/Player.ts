@@ -2,8 +2,8 @@ import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class Player extends PhysicObject {
-  constructor(position: Vector2, radius: number, img: string) {
-    super(position, radius, img);
+  constructor(position: Vector2, radius: number, img: string, mass: number) {
+    super(position, radius, img, mass);
     this.sprite = Sprite.from(img);
     this.sprite.width = radius * 2;
     this.sprite.height = radius * 2;
@@ -65,5 +65,9 @@ export class Player extends PhysicObject {
     this.position.y += this.moveVector.y;
     this.sprite.position.x = this.position.x;
     this.sprite.position.y = this.position.y;
+  }
+
+  collisionTint(): void {
+    this.tintCounter = 1;
   }
 }

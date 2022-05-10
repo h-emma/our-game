@@ -1,9 +1,10 @@
-import { Application, Sprite } from 'pixi.js';
+import { Application, filters } from 'pixi.js';
 import { PhysicObject } from './src/classes/PhysicObject';
 import { Player } from './src/classes/Player';
 import { SpringCircle } from './src/classes/SpringCircle';
 
 const app = new Application({ backgroundColor: 0x000000 });
+
 document.body.appendChild(app.view);
 
 app.renderer.resize(1200, 800);
@@ -11,15 +12,16 @@ app.renderer.resize(1200, 800);
 const physicsObjs: PhysicObject[] = [];
 
 physicsObjs.push(
-  new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png')
+  new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png', 2)
 );
 
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 25; i++) {
   physicsObjs.push(
     new SpringCircle(
-      { x: 600 + i * 10, y: 400 + Math.random() * 2 },
-      50,
+      { x: 600 + i, y: 400 + Math.random() * 2 },
+      40,
       './assets/images/Yrgonaut.png',
+      0.2,
       0.001,
       0.99
     )
@@ -30,11 +32,16 @@ physicsObjs.forEach((obj) => {
   app.stage.addChild(obj.sprite);
 });
 
-physicsObjs[0].addForce({ x: 1, y: 2 });
 app.ticker.add(() => {
   physicsObjs.forEach((obj) => {
     obj.checkBorders(0.6);
     obj.updatePosition();
+    if (obj.tintCounter > 0) {
+      obj.tintCounter -= 0.02;
+    } else {
+      obj.tintCounter = 0;
+    }
+    obj.collisionTint();
   });
   checkCollisions();
 });
@@ -54,12 +61,16 @@ function checkCollisions(): void {
         m - (physicsObjs[i].radius + physicsObjs[j].radius);
       if (collideDistance < 0) {
         const dirV = normalizeM(betweenVector, m);
+        const massInfluence = physicsObjs[j].mass / physicsObjs[i].mass;
         physicsObjs[i].addForce({
-          x: dirV.x * collideDistance * 0.1,
-          y: dirV.y * collideDistance * 0.1,
+          x: dirV.x * collideDistance * massInfluence * 0.1,
+          y: dirV.y * collideDistance * massInfluence * 0.1,
         });
         physicsObjs[i].moveVector.x *= 0.96;
         physicsObjs[i].moveVector.y *= 0.96;
+        if (collideDistance < -16) {
+          physicsObjs[i].tintCounter = 1;
+        }
       }
     }
   }
@@ -75,4 +86,12 @@ function getBetweenVector(fromV: Vector2, toV: Vector2) {
 
 function normalizeM(v: Vector2, m: number): Vector2 {
   return { x: v.x / m, y: v.y / m };
+}
+
+function clamp(number, min, max) {
+  return Math.max(min, Math.min(number, max));
+}
+
+function lerp(from, to, value) {
+  from * (1 - value) + to * value;
 }
