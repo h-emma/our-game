@@ -1,7 +1,9 @@
-import { Application, filters } from 'pixi.js';
+import { Application, filters, Loader } from 'pixi.js';
 import { PhysicObject } from './src/classes/PhysicObject';
 import { Player } from './src/classes/Player';
+import { Duck } from './src/classes/Duck';
 import { SpringCircle } from './src/classes/SpringCircle';
+import { sound } from '@pixi/sound';
 
 const app = new Application({ backgroundColor: 0x000000 });
 
@@ -9,18 +11,64 @@ document.body.appendChild(app.view);
 
 app.renderer.resize(1200, 800);
 
+const loader = new Loader();
+loader.add('gameTune', './assets/audio/The-Lone-Wolf.mp3');
+loader.load(function (loader, resources) {
+  resources.gameTune.sound.play();
+  console.log(sound);
+});
+
+// Sound.from({
+//   url: './assets/audio/The-Lone-Wolf.mp3',
+//   preload: true,
+//   loaded: function (err, sound) {
+//     // sound.resume();
+//     sound.play();
+//   },
+// });
+
 const physicsObjs: PhysicObject[] = [];
 
 physicsObjs.push(
   new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png', 2)
 );
 
-for (let i = 0; i < 25; i++) {
+physicsObjs.push(
+  new Duck({ x: 900, y: 550 }, 30, './assets/images/Duck.png', 2)
+);
+
+for (let i = 0; i < 20; i++) {
   physicsObjs.push(
     new SpringCircle(
       { x: 600 + i, y: 400 + Math.random() * 2 },
       40,
-      './assets/images/Yrgonaut.png',
+      './assets/images/Bubble.png',
+      0.2,
+      0.001,
+      0.99
+    )
+  );
+}
+
+for (let i = 0; i < 10; i++) {
+  physicsObjs.push(
+    new SpringCircle(
+      { x: 100 + i, y: 100 + Math.random() * 2 },
+      40,
+      './assets/images/Bubble.png',
+      0.2,
+      0.001,
+      0.99
+    )
+  );
+}
+
+for (let i = 0; i < 5; i++) {
+  physicsObjs.push(
+    new SpringCircle(
+      { x: 800 + i, y: 600 + Math.random() * 2 },
+      40,
+      './assets/images/Bubble.png',
       0.2,
       0.001,
       0.99
