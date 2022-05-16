@@ -10,6 +10,7 @@ Add the installation instructions.
 
 # Changelog
 
+-   Sixth pull request (https://github.com/h-emma/our-game/pull/10)
 -   Fifth pull request (https://github.com/h-emma/our-game/pull/9)
 -   Fourth pull request (https://github.com/h-emma/our-game/pull/8)
 -   Third pull request (https://github.com/h-emma/our-game/pull/6)
