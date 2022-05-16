@@ -1,4 +1,4 @@
-import { Sprite, utils, filters } from 'pixi.js';
+import { Sprite, utils } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class SpringCircle extends PhysicObject {
