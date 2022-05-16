@@ -19,6 +19,10 @@ export abstract class PhysicObject {
 
   abstract addForce(force: Vector2): void;
   abstract updatePosition(): void;
-  abstract checkBorders(bounceDamp: number): void;
+  abstract checkBorders(
+    bounceDamp: number,
+    winWidth: number,
+    winHeight: number
+  ): void;
   abstract collisionTint(): void;
 }

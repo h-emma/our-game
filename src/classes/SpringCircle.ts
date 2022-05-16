@@ -1,4 +1,4 @@
-import { Sprite, utils, filters } from 'pixi.js';
+import { Sprite, utils } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class SpringCircle extends PhysicObject {
@@ -23,18 +23,18 @@ export class SpringCircle extends PhysicObject {
     this.damp = damp;
   }
 
-  checkBorders(bounceDamp: number) {
+  checkBorders(bounceDamp: number, winWidth: number, winHeight: number) {
     let hitBorder = false;
     if (this.position.x <= 0) {
       this.moveVector.x = Math.abs(this.moveVector.x);
       hitBorder = true;
-    } else if (this.position.x + this.radius * 2 >= 1200) {
+    } else if (this.position.x + this.radius * 2 >= winWidth) {
       this.moveVector.x = -Math.abs(this.moveVector.x);
       hitBorder = true;
     } else if (this.position.y <= 0) {
       this.moveVector.y = Math.abs(this.moveVector.y);
       hitBorder = true;
-    } else if (this.position.y + this.radius * 2 >= 800) {
+    } else if (this.position.y + this.radius * 2 >= winHeight) {
       this.moveVector.y = -Math.abs(this.moveVector.y);
       hitBorder = true;
     }

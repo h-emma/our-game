@@ -1,4 +1,4 @@
-import { Application, filters, Loader } from 'pixi.js';
+import { Application, filters, Loader, Container, Text } from 'pixi.js';
 import { PhysicObject } from './src/classes/PhysicObject';
 import { Player } from './src/classes/Player';
 import { Duck } from './src/classes/Duck';
@@ -6,83 +6,75 @@ import { SpringCircle } from './src/classes/SpringCircle';
 import { sound } from '@pixi/sound';
 
 const app = new Application({ backgroundColor: 0x000000 });
+const physicsObjs: PhysicObject[] = [];
+const menuContainer = new Container();
+const winWidth = 1000;
+const winHeight = 700;
+let levelWasLoaded = false;
+const menuText = new Text('Press spacebar to start the game.', {
+  fill: 0xffffff,
+});
 
 document.body.appendChild(app.view);
+app.stage.addChild(menuContainer);
+menuContainer.addChild(menuText);
 
-app.renderer.resize(1200, 800);
+app.renderer.resize(winWidth, winHeight);
 
 const loader = new Loader();
 loader.add('gameTune', './assets/audio/The-Lone-Wolf.mp3');
 loader.load(function (loader, resources) {
-  resources.gameTune.sound.play();
-  console.log(sound);
+  sound; //??!
+  window.addEventListener('keydown', (e) => {
+    if (!levelWasLoaded && e.code === 'Space') {
+      resources.gameTune.sound.play();
+      resources.gameTune.sound.loop = true;
+
+      levelWasLoaded = true;
+      menuContainer.parent.removeChild(menuContainer);
+      loadLevel();
+    }
+  });
 });
 
-// Sound.from({
-//   url: './assets/audio/The-Lone-Wolf.mp3',
-//   preload: true,
-//   loaded: function (err, sound) {
-//     // sound.resume();
-//     sound.play();
-//   },
-// });
-
-const physicsObjs: PhysicObject[] = [];
-
-physicsObjs.push(
-  new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png', 2)
-);
-
-physicsObjs.push(
-  new Duck({ x: 900, y: 550 }, 30, './assets/images/Duck.png', 2)
-);
-
-for (let i = 0; i < 20; i++) {
-  physicsObjs.push(
-    new SpringCircle(
-      { x: 600 + i, y: 400 + Math.random() * 2 },
-      40,
-      './assets/images/Bubble.png',
-      0.2,
-      0.001,
-      0.99
-    )
-  );
-}
-
-for (let i = 0; i < 10; i++) {
-  physicsObjs.push(
-    new SpringCircle(
-      { x: 100 + i, y: 100 + Math.random() * 2 },
-      40,
-      './assets/images/Bubble.png',
-      0.2,
-      0.001,
-      0.99
-    )
-  );
-}
-
-for (let i = 0; i < 5; i++) {
-  physicsObjs.push(
-    new SpringCircle(
-      { x: 800 + i, y: 600 + Math.random() * 2 },
-      40,
-      './assets/images/Bubble.png',
-      0.2,
-      0.001,
-      0.99
-    )
-  );
-}
-
-physicsObjs.forEach((obj) => {
-  app.stage.addChild(obj.sprite);
+window.addEventListener('click', (e) => {
+  if (e.clientX < 20 && e.clientY < 20) {
+    sound.toggleMuteAll();
+  }
 });
+
+function loadLevel() {
+  physicsObjs.push(
+    new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png', 2)
+  );
+
+  physicsObjs.push(
+    new Duck({ x: 900, y: 550 }, 30, './assets/images/Duck.png', 2)
+  );
+
+  physicsObjs[1].addForce({ x: 100, y: 0 });
+
+  for (let i = 0; i < 20; i++) {
+    physicsObjs.push(
+      new SpringCircle(
+        { x: 600 + i, y: 400 + Math.random() * 2 },
+        40,
+        './assets/images/Bubble.png',
+        0.2,
+        0.001,
+        0.99
+      )
+    );
+  }
+
+  physicsObjs.forEach((obj) => {
+    app.stage.addChild(obj.sprite);
+  });
+}
 
 app.ticker.add(() => {
   physicsObjs.forEach((obj) => {
-    obj.checkBorders(0.6);
+    obj.checkBorders(0.6, winWidth, winHeight);
     obj.updatePosition();
     if (obj.tintCounter > 0) {
       obj.tintCounter -= 0.02;
