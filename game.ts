@@ -1,23 +1,36 @@
-import { Application, filters, Loader, Container, Text } from 'pixi.js';
+import {
+  Application,
+  filters,
+  Loader,
+  Container,
+  Text,
+  Sprite,
+  TextStyle,
+} from 'pixi.js';
 import { PhysicObject } from './src/classes/PhysicObject';
 import { Player } from './src/classes/Player';
 import { Duck } from './src/classes/Duck';
 import { SpringCircle } from './src/classes/SpringCircle';
 import { sound } from '@pixi/sound';
+import { StartMenu } from './src/classes/StartMenu';
 
 const app = new Application({ backgroundColor: 0x000000 });
 const physicsObjs: PhysicObject[] = [];
 const menuContainer = new Container();
-const winWidth = 1000;
-const winHeight = 700;
+const winWidth = 1200;
+const winHeight = 640;
 let levelWasLoaded = false;
-const menuText = new Text('Press spacebar to start the game.', {
-  fill: 0xffffff,
-});
 
 document.body.appendChild(app.view);
+
+const startMenu = new StartMenu();
+
 app.stage.addChild(menuContainer);
-menuContainer.addChild(menuText);
+menuContainer.addChild(startMenu.menuTextWelcome);
+menuContainer.addChild(startMenu.menuTextStart);
+menuContainer.addChild(startMenu.menuTextHowToPlay);
+menuContainer.addChild(startMenu.menuImageYrgonaut);
+menuContainer.addChild(startMenu.menuImageDuck);
 
 app.renderer.resize(winWidth, winHeight);
 
@@ -27,6 +40,7 @@ loader.load(function (loader, resources) {
   sound; //??!
   window.addEventListener('keydown', (e) => {
     if (!levelWasLoaded && e.code === 'Space') {
+      // resources.gameTune.sound.resume();
       resources.gameTune.sound.play();
       resources.gameTune.sound.loop = true;
 
@@ -45,7 +59,12 @@ window.addEventListener('click', (e) => {
 
 function loadLevel() {
   physicsObjs.push(
-    new Player({ x: 100, y: 100 }, 50, './assets/images/Yrgonaut.png', 2)
+    new Player(
+      { x: 100, y: 100 },
+      50,
+      './assets/images/YrgonautInBubble.png',
+      2
+    )
   );
 
   physicsObjs.push(
