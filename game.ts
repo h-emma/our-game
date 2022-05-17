@@ -51,12 +51,6 @@ loader.load(function (loader, resources) {
   });
 });
 
-window.addEventListener('click', (e) => {
-  if (e.clientX < 20 && e.clientY < 20) {
-    sound.toggleMuteAll();
-  }
-});
-
 function loadLevel() {
   physicsObjs.push(
     new Player(
@@ -88,6 +82,30 @@ function loadLevel() {
 
   physicsObjs.forEach((obj) => {
     app.stage.addChild(obj.sprite);
+  });
+
+  //mute sound sprite
+  const icon = Sprite.from('./assets/images/VolumeMuted.png');
+  app.stage.addChild(icon);
+  icon.width = 40;
+  icon.height = 40;
+  icon.interactive = true;
+  icon.buttonMode = true;
+
+  let muteAreaX = (window.innerWidth - winWidth) / 2;
+  let muteAreaY = (window.innerHeight - winHeight) / 2;
+  window.addEventListener('resize', () => {
+    muteAreaX = (window.innerWidth - winWidth) / 2;
+    muteAreaY = (window.innerHeight - winHeight) / 2;
+  });
+
+  window.addEventListener('click', (e) => {
+    if (
+      e.clientX < icon.width + muteAreaX &&
+      e.clientY < icon.height + muteAreaY
+    ) {
+      sound.toggleMuteAll();
+    }
   });
 }
 
