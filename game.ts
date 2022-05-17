@@ -110,6 +110,21 @@ function loadLevel() {
 }
 
 app.ticker.add(() => {
+  if (physicsObjs.length > 0) {
+    const player = physicsObjs[0] as Player;
+    const moveMagnitude = Math.sqrt(
+      player.inputHorizontal * player.inputHorizontal +
+        player.inputVertical * player.inputVertical
+    );
+    if (moveMagnitude) {
+      const moveDir = {
+        x: player.inputHorizontal / moveMagnitude,
+        y: player.inputVertical / moveMagnitude,
+      };
+      player.addForce({ x: moveDir.x * 0.2, y: moveDir.y * 0.2 });
+    }
+  }
+
   physicsObjs.forEach((obj) => {
     obj.checkBorders(0.6, winWidth, winHeight);
     obj.updatePosition();
