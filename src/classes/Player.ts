@@ -2,6 +2,10 @@ import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class Player extends PhysicObject {
+  inputArray: string[] = [];
+  inputHorizontal = 0;
+  inputVertical = 0;
+
   constructor(position: Vector2, radius: number, img: string, mass: number) {
     super(position, radius, img, mass);
     this.sprite = Sprite.from(img);
