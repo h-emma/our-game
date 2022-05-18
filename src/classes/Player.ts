@@ -1,4 +1,4 @@
-import { Sprite, Ticker } from 'pixi.js';
+import { Sprite } from 'pixi.js';
 import { PhysicObject } from './PhysicObject';
 
 export class Player extends PhysicObject {
