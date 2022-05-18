@@ -35,7 +35,7 @@ export class StartMenu {
     this.menuTextStart.position.x = 290;
     this.menuTextStart.position.y = 440;
 
-    this.menuImageYrgonaut = Sprite.from('./assets/images/Yrgonaut.png');
+    this.menuImageYrgonaut = Sprite.from('/images/Yrgonaut.png');
     this.menuImageYrgonaut.height = 150;
     this.menuImageYrgonaut.width = 214;
     this.menuImageYrgonaut.anchor.x = 0;
@@ -43,7 +43,7 @@ export class StartMenu {
     this.menuImageYrgonaut.position.x = 930;
     this.menuImageYrgonaut.position.y = 480;
 
-    this.menuImageDuck = Sprite.from('./assets/images/Duck.png');
+    this.menuImageDuck = Sprite.from('/images/Duck.png');
     this.menuImageDuck.height = 50;
     this.menuImageDuck.width = 50;
     this.menuImageDuck.anchor.x = 0;
