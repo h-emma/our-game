@@ -35,7 +35,7 @@ menuContainer.addChild(startMenu.menuImageDuck);
 app.renderer.resize(winWidth, winHeight);
 
 const loader = new Loader();
-loader.add('gameTune', './assets/audio/The-Lone-Wolf.mp3');
+loader.add('gameTune', '/audio/The-Lone-Wolf.mp3');
 loader.load(function (loader, resources) {
   sound; //??!
   window.addEventListener('keydown', (e) => {
@@ -53,17 +53,10 @@ loader.load(function (loader, resources) {
 
 function loadLevel() {
   physicsObjs.push(
-    new Player(
-      { x: 100, y: 100 },
-      50,
-      './assets/images/YrgonautInBubble.png',
-      2
-    )
+    new Player({ x: 100, y: 100 }, 50, '/images/YrgonautInBubble.png', 2)
   );
 
-  physicsObjs.push(
-    new Duck({ x: 900, y: 550 }, 30, './assets/images/Duck.png', 2)
-  );
+  physicsObjs.push(new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 2));
 
   physicsObjs[1].addForce({ x: 100, y: 0 });
 
@@ -72,7 +65,7 @@ function loadLevel() {
       new SpringCircle(
         { x: 600 + i, y: 400 + Math.random() * 2 },
         40,
-        './assets/images/Bubble.png',
+        '/images/Bubble.png',
         0.2,
         0.001,
         0.99
@@ -85,7 +78,7 @@ function loadLevel() {
   });
 
   //mute sound sprite
-  const icon = Sprite.from('./assets/images/VolumeMuted.png');
+  const icon = Sprite.from('/images/VolumeMuted.png');
   app.stage.addChild(icon);
   icon.width = 40;
   icon.height = 40;
