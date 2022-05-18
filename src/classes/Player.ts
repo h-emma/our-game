@@ -16,23 +16,49 @@ export class Player extends PhysicObject {
 
   addEventListeners() {
     window.addEventListener('keydown', (e) => {
-      this.motion(e.key, Math.random() * 0.05 + 0.5);
+      let isInArray = false;
+      for (let i = 0; i < this.inputArray.length; i++) {
+        if (this.inputArray[i] === e.key) {
+          isInArray = true;
+          break;
+        }
+      }
+      if (!isInArray) {
+        this.inputArray.push(e.key);
+      }
+      this.inputHorizontal = 0;
+      this.inputVertical = 0;
+      this.inputArray.forEach((key) => {
+        this.setInputAxis(key);
+      });
+    });
+    window.addEventListener('keyup', (e) => {
+      for (let i = 0; i < this.inputArray.length; i++) {
+        if (this.inputArray[i] === e.key) {
+          this.inputArray.splice(i);
+          break;
+        }
+      }
+      if (this.inputArray.length === 0) {
+        this.inputHorizontal = 0;
+        this.inputVertical = 0;
+      }
     });
   }
 
-  motion(key: string, power: number): void {
+  setInputAxis(key: string): void {
     switch (key) {
       case 'ArrowUp':
-        this.addForce({ x: 0, y: -power });
+        this.inputVertical--;
         break;
       case 'ArrowDown':
-        this.addForce({ x: 0, y: power });
+        this.inputVertical++;
         break;
       case 'ArrowLeft':
-        this.addForce({ x: -power, y: 0 });
+        this.inputHorizontal--;
         break;
       case 'ArrowRight':
-        this.addForce({ x: power, y: 0 });
+        this.inputHorizontal++;
         break;
     }
   }
