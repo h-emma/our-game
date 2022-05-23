@@ -13,13 +13,16 @@ import { Duck } from './src/classes/Duck';
 import { SpringCircle } from './src/classes/SpringCircle';
 import { sound } from '@pixi/sound';
 import { StartMenu } from './src/classes/StartMenu';
+import Levels from './src/classes/Levels';
 
 const app = new Application({ backgroundColor: 0x000000 });
-const physicsObjs: PhysicObject[] = [];
+let physicsObjs: PhysicObject[] = [];
 const menuContainer = new Container();
 const winWidth = 1200;
 const winHeight = 640;
 let levelWasLoaded = false;
+let currentLevel = 1;
+const nrOfLevels = 2; //OBS, don't forget to change!!!
 
 document.body.appendChild(app.view);
 
@@ -34,6 +37,12 @@ menuContainer.addChild(startMenu.menuImageDuck);
 
 app.renderer.resize(winWidth, winHeight);
 
+scaleCanvasToFitScreen();
+
+window.addEventListener('resize', () => {
+  scaleCanvasToFitScreen();
+});
+
 const loader = new Loader();
 loader.add('gameTune', '/audio/The-Lone-Wolf.mp3');
 loader.load(function (loader, resources) {
@@ -46,60 +55,67 @@ loader.load(function (loader, resources) {
 
       levelWasLoaded = true;
       menuContainer.parent.removeChild(menuContainer);
-      loadLevel();
+      loadLevel('01');
     }
   });
 });
 
-function loadLevel() {
-  physicsObjs.push(
-    new Player({ x: 100, y: 100 }, 50, '/images/YrgonautInBubble.png', 2)
-  );
-
-  physicsObjs.push(new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 2));
-
-  physicsObjs[1].addForce({ x: 100, y: 0 });
-
-  for (let i = 0; i < 20; i++) {
-    physicsObjs.push(
-      new SpringCircle(
-        { x: 600 + i, y: 400 + Math.random() * 2 },
-        40,
-        '/images/Bubble.png',
-        0.2,
-        0.001,
-        0.99
-      )
-    );
+function loadLevel(number) {
+  for (let i = 0; i < physicsObjs.length; i++) {
+    physicsObjs[i].sprite.parent.removeChild(physicsObjs[i].sprite);
   }
+  physicsObjs = [];
 
-  physicsObjs.forEach((obj) => {
-    app.stage.addChild(obj.sprite);
-  });
+  fetch(`/levels/level${number}.json`)
+    .then((response) => response.json())
+    .then((levelData) => {
+      physicsObjs.push(
+        new Player({ x: 100, y: 100 }, 50, '/images/YrgonautInBubble.png', 2)
+      );
 
-  //mute sound sprite
-  const icon = Sprite.from('/images/VolumeMuted.png');
-  app.stage.addChild(icon);
-  icon.width = 40;
-  icon.height = 40;
-  icon.interactive = true;
-  icon.buttonMode = true;
+      physicsObjs.push(new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 2));
 
-  let muteAreaX = (window.innerWidth - winWidth) / 2;
-  let muteAreaY = (window.innerHeight - winHeight) / 2;
-  window.addEventListener('resize', () => {
-    muteAreaX = (window.innerWidth - winWidth) / 2;
-    muteAreaY = (window.innerHeight - winHeight) / 2;
-  });
+      for (let i = 0; i < Object.keys(levelData).length; i++) {
+        physicsObjs.push(
+          new SpringCircle(
+            { x: levelData[i].x * winWidth, y: levelData[i].y * winHeight },
+            40,
+            '/images/Bubble.png',
+            0.2,
+            0.001,
+            0.99
+          )
+        );
+      }
 
-  window.addEventListener('click', (e) => {
-    if (
-      e.clientX < icon.width + muteAreaX &&
-      e.clientY < icon.height + muteAreaY
-    ) {
-      sound.toggleMuteAll();
-    }
-  });
+      physicsObjs.forEach((obj) => {
+        app.stage.addChild(obj.sprite);
+      });
+
+      //mute sound sprite
+      const icon = Sprite.from('/images/VolumeMuted.png');
+      app.stage.addChild(icon);
+      icon.width = 40;
+      icon.height = 40;
+      icon.interactive = true;
+      icon.buttonMode = true;
+
+      let muteAreaX = (window.innerWidth - winWidth) / 2;
+      let muteAreaY = (window.innerHeight - winHeight) / 2;
+      window.addEventListener('resize', () => {
+        muteAreaX = (window.innerWidth - winWidth) / 2;
+        muteAreaY = (window.innerHeight - winHeight) / 2;
+      });
+
+      window.addEventListener('click', (e) => {
+        if (
+          e.clientX < icon.width + muteAreaX &&
+          e.clientY < icon.height + muteAreaY
+        ) {
+          sound.toggleMuteAll();
+        }
+      });
+    });
 }
 
 app.ticker.add(() => {
@@ -115,6 +131,23 @@ app.ticker.add(() => {
         y: player.inputVertical / moveMagnitude,
       };
       player.addForce({ x: moveDir.x * 0.2, y: moveDir.y * 0.2 });
+    }
+
+    const playerDuckVector = {
+      x: physicsObjs[1].position.x - physicsObjs[0].position.x,
+      y: physicsObjs[1].position.y - physicsObjs[0].position.y,
+    };
+    const playerDuckDist = Math.sqrt(
+      playerDuckVector.x * playerDuckVector.x +
+        playerDuckVector.y * playerDuckVector.y
+    );
+    if (playerDuckDist <= 80) {
+      if (currentLevel < nrOfLevels) {
+        currentLevel++;
+        loadLevel(`0${currentLevel}`);
+      } else {
+        currentLevel = 0;
+      }
     }
   }
 
@@ -158,6 +191,14 @@ function checkCollisions(): void {
         }
       }
     }
+  }
+}
+
+function scaleCanvasToFitScreen() {
+  if (window.innerWidth < winWidth) {
+    app.view.style.scale = `${window.innerWidth / winWidth}`;
+  } else {
+    app.view.style.scale = '1';
   }
 }
 
