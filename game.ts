@@ -1,19 +1,10 @@
-import {
-  Application,
-  filters,
-  Loader,
-  Container,
-  Text,
-  Sprite,
-  TextStyle,
-} from 'pixi.js';
+import { Application, Loader, Container, Sprite } from 'pixi.js';
 import { PhysicObject } from './src/classes/PhysicObject';
 import { Player } from './src/classes/Player';
 import { Duck } from './src/classes/Duck';
 import { SpringCircle } from './src/classes/SpringCircle';
 import { sound } from '@pixi/sound';
 import { StartMenu } from './src/classes/StartMenu';
-import Levels from './src/classes/Levels';
 
 const app = new Application({ backgroundColor: 0x000000 });
 let physicsObjs: PhysicObject[] = [];
@@ -22,7 +13,7 @@ const winWidth = 1200;
 const winHeight = 640;
 let levelWasLoaded = false;
 let currentLevel = 1;
-const nrOfLevels = 2; //OBS, don't forget to change!!!
+const nrOfLevels = 3; //OBS, don't forget to change!!!
 
 document.body.appendChild(app.view);
 
@@ -49,13 +40,12 @@ loader.load(function (loader, resources) {
   sound; //??!
   window.addEventListener('keydown', (e) => {
     if (!levelWasLoaded && e.code === 'Space') {
-      // resources.gameTune.sound.resume();
       resources.gameTune.sound.play();
       resources.gameTune.sound.loop = true;
 
       levelWasLoaded = true;
       menuContainer.parent.removeChild(menuContainer);
-      loadLevel('01');
+      loadLevel(1);
     }
   });
 });
@@ -144,7 +134,7 @@ app.ticker.add(() => {
     if (playerDuckDist <= 80) {
       if (currentLevel < nrOfLevels) {
         currentLevel++;
-        loadLevel(`0${currentLevel}`);
+        loadLevel(currentLevel);
       } else {
         currentLevel = 0;
       }
