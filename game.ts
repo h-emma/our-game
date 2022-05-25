@@ -37,6 +37,7 @@ window.addEventListener('resize', () => {
 const loader = new Loader();
 loader.add('gameTune', '/audio/The-Lone-Wolf.mp3');
 loader.load(function (loader, resources) {
+  loader.progress; //Use 'loader' not get an error on netlify.
   window.addEventListener('keydown', (e) => {
     if (!levelWasLoaded && e.code === 'Space') {
       if (resources.gameTune.sound) {
