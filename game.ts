@@ -37,11 +37,13 @@ window.addEventListener('resize', () => {
 const loader = new Loader();
 loader.add('gameTune', '/audio/The-Lone-Wolf.mp3');
 loader.load(function (loader, resources) {
-  sound; //??!
+  loader.progress; //Use 'loader' not get an error on netlify.
   window.addEventListener('keydown', (e) => {
     if (!levelWasLoaded && e.code === 'Space') {
-      resources.gameTune.sound.play();
-      resources.gameTune.sound.loop = true;
+      if (resources.gameTune.sound) {
+        resources.gameTune.sound.play();
+        resources.gameTune.sound.loop = true;
+      }
 
       levelWasLoaded = true;
       menuContainer.parent.removeChild(menuContainer);
@@ -50,7 +52,7 @@ loader.load(function (loader, resources) {
   });
 });
 
-function loadLevel(number) {
+function loadLevel(number: number) {
   for (let i = 0; i < physicsObjs.length; i++) {
     physicsObjs[i].sprite.parent.removeChild(physicsObjs[i].sprite);
   }
@@ -202,12 +204,4 @@ function getBetweenVector(fromV: Vector2, toV: Vector2) {
 
 function normalizeM(v: Vector2, m: number): Vector2 {
   return { x: v.x / m, y: v.y / m };
-}
-
-function clamp(number, min, max) {
-  return Math.max(min, Math.min(number, max));
-}
-
-function lerp(from, to, value) {
-  from * (1 - value) + to * value;
 }
