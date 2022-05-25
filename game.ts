@@ -60,7 +60,7 @@ function loadLevel(number) {
     .then((response) => response.json())
     .then((levelData) => {
       physicsObjs.push(
-        new Player({ x: 100, y: 100 }, 50, '/images/YrgonautInBubble.png', 2)
+        new Player({ x: 100, y: 100 }, 40, '/images/YrgonautInBubble.png', 2)
       );
 
       physicsObjs.push(new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 2));
@@ -69,7 +69,7 @@ function loadLevel(number) {
         physicsObjs.push(
           new SpringCircle(
             { x: levelData[i].x * winWidth, y: levelData[i].y * winHeight },
-            40,
+            30,
             '/images/Bubble.png',
             0.2,
             0.001,
