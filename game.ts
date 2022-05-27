@@ -11,6 +11,7 @@ let physicsObjs: PhysicObject[] = [];
 const menuContainer = new Container();
 const winWidth = 1200;
 const winHeight = 640;
+let winScaleFraction = 1; //The amount the canvas is scaled
 let levelWasLoaded = false;
 let currentLevel = 1;
 const nrOfLevels = 3; //OBS, don't forget to change!!!
@@ -65,7 +66,13 @@ function loadLevel(number: number) {
         new Player({ x: 100, y: 100 }, 40, '/images/YrgonautInBubble.png', 2)
       );
 
-      physicsObjs.push(new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 2));
+      physicsObjs.push(
+        new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 0.2)
+      );
+      physicsObjs[physicsObjs.length - 1].addForce({
+        x: Math.random() * 4 - 2,
+        y: Math.random() * 4 - 2,
+      });
 
       for (let i = 0; i < Object.keys(levelData).length; i++) {
         physicsObjs.push(
@@ -78,6 +85,10 @@ function loadLevel(number: number) {
             0.99
           )
         );
+        physicsObjs[physicsObjs.length - 1].addForce({
+          x: Math.random() * 4 - 2,
+          y: Math.random() * 4 - 2,
+        });
       }
 
       physicsObjs.forEach((obj) => {
@@ -95,14 +106,19 @@ function loadLevel(number: number) {
       let muteAreaX = (window.innerWidth - winWidth) / 2;
       let muteAreaY = (window.innerHeight - winHeight) / 2;
       window.addEventListener('resize', () => {
-        muteAreaX = (window.innerWidth - winWidth) / 2;
-        muteAreaY = (window.innerHeight - winHeight) / 2;
+        if (window.innerWidth < winWidth) {
+          muteAreaX = 0;
+          winScaleFraction = window.innerWidth / winWidth;
+        } else {
+          muteAreaX = (window.innerWidth - winWidth) / 2;
+        }
+        muteAreaY = (window.innerHeight - winHeight * winScaleFraction) / 2;
       });
 
       window.addEventListener('click', (e) => {
         if (
-          e.clientX < icon.width + muteAreaX &&
-          e.clientY < icon.height + muteAreaY
+          e.clientX < icon.width * winScaleFraction + muteAreaX &&
+          e.clientY < icon.height * winScaleFraction + muteAreaY
         ) {
           sound.toggleMuteAll();
         }
