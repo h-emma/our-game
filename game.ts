@@ -11,10 +11,13 @@ let physicsObjs: PhysicObject[] = [];
 const menuContainer = new Container();
 const winWidth = 1200;
 const winHeight = 640;
-let winScaleFraction = 1; //The amount the canvas is scaled
+let winScaleFraction = 1; //The amount the canvas is scaled when smaller browser window
+let marginXWidth = 1;
+let marginYHeight = 1;
 let levelWasLoaded = false;
 let currentLevel = 1;
 const nrOfLevels = 3; //OBS, don't forget to change!!!
+let muteIcon: Sprite;
 
 document.body.appendChild(app.view);
 
@@ -95,35 +98,41 @@ function loadLevel(number: number) {
         app.stage.addChild(obj.sprite);
       });
 
+      calculateWinFractionAndMargins();
+
       //mute sound sprite
-      const icon = Sprite.from('/images/VolumeMuted.png');
-      app.stage.addChild(icon);
-      icon.width = 40;
-      icon.height = 40;
-      icon.interactive = true;
-      icon.buttonMode = true;
+      if (!muteIcon) {
+        muteIcon = Sprite.from('/images/VolumeMuted.png');
+        app.stage.addChild(muteIcon);
+        muteIcon.width = 40;
+        muteIcon.height = 40;
+        muteIcon.interactive = true;
+        muteIcon.buttonMode = true;
 
-      let muteAreaX = (window.innerWidth - winWidth) / 2;
-      let muteAreaY = (window.innerHeight - winHeight) / 2;
-      window.addEventListener('resize', () => {
-        if (window.innerWidth < winWidth) {
-          muteAreaX = 0;
-          winScaleFraction = window.innerWidth / winWidth;
-        } else {
-          muteAreaX = (window.innerWidth - winWidth) / 2;
-        }
-        muteAreaY = (window.innerHeight - winHeight * winScaleFraction) / 2;
-      });
+        window.addEventListener('click', (e) => {
+          if (
+            e.clientX < muteIcon.width * winScaleFraction + marginXWidth &&
+            e.clientY < muteIcon.height * winScaleFraction + marginYHeight
+          ) {
+            sound.toggleMuteAll();
+          }
+        });
 
-      window.addEventListener('click', (e) => {
-        if (
-          e.clientX < icon.width * winScaleFraction + muteAreaX &&
-          e.clientY < icon.height * winScaleFraction + muteAreaY
-        ) {
-          sound.toggleMuteAll();
-        }
-      });
+        window.addEventListener('resize', () => {
+          calculateWinFractionAndMargins();
+        });
+      }
     });
+}
+
+function calculateWinFractionAndMargins() {
+  if (window.innerWidth < winWidth) {
+    marginXWidth = 0;
+    winScaleFraction = window.innerWidth / winWidth;
+  } else {
+    marginXWidth = (window.innerWidth - winWidth) / 2;
+  }
+  marginYHeight = (window.innerHeight - winHeight * winScaleFraction) / 2;
 }
 
 app.ticker.add(() => {
@@ -141,35 +150,19 @@ app.ticker.add(() => {
       player.addForce({ x: moveDir.x * 0.2, y: moveDir.y * 0.2 });
     }
 
-    const playerDuckVector = {
-      x: physicsObjs[1].position.x - physicsObjs[0].position.x,
-      y: physicsObjs[1].position.y - physicsObjs[0].position.y,
-    };
-    const playerDuckDist = Math.sqrt(
-      playerDuckVector.x * playerDuckVector.x +
-        playerDuckVector.y * playerDuckVector.y
-    );
-    if (playerDuckDist <= 80) {
-      if (currentLevel < nrOfLevels) {
-        currentLevel++;
-        loadLevel(currentLevel);
+    physicsObjs.forEach((obj) => {
+      obj.checkBorders(0.6, winWidth, winHeight);
+      obj.updatePosition();
+      if (obj.tintCounter > 0) {
+        obj.tintCounter -= 0.02;
       } else {
-        currentLevel = 0;
+        obj.tintCounter = 0;
       }
-    }
+      obj.collisionTint();
+    });
+    checkPlayerDuckCollision();
+    checkCollisions();
   }
-
-  physicsObjs.forEach((obj) => {
-    obj.checkBorders(0.6, winWidth, winHeight);
-    obj.updatePosition();
-    if (obj.tintCounter > 0) {
-      obj.tintCounter -= 0.02;
-    } else {
-      obj.tintCounter = 0;
-    }
-    obj.collisionTint();
-  });
-  checkCollisions();
 });
 
 function checkCollisions(): void {
@@ -206,7 +199,26 @@ function scaleCanvasToFitScreen() {
   if (window.innerWidth < winWidth) {
     app.view.style.transform = `scale(${window.innerWidth / winWidth})`;
   } else {
-    app.view.style.transform = `scale(1)`;
+    app.view.style.transform = 'scale(1)';
+  }
+}
+
+function checkPlayerDuckCollision(): void {
+  const playerDuckVector = {
+    x: physicsObjs[1].position.x - physicsObjs[0].position.x,
+    y: physicsObjs[1].position.y - physicsObjs[0].position.y,
+  };
+  const playerDuckDist = Math.sqrt(
+    playerDuckVector.x * playerDuckVector.x +
+      playerDuckVector.y * playerDuckVector.y
+  );
+  if (playerDuckDist <= 80) {
+    if (currentLevel < nrOfLevels) {
+      currentLevel++;
+      loadLevel(currentLevel);
+    } else {
+      currentLevel = 0;
+    }
   }
 }
 
