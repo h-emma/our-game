@@ -12,8 +12,10 @@ const menuContainer = new Container();
 const winWidth = 1200;
 const winHeight = 640;
 let winScaleFraction = 1; //The amount the canvas is scaled when smaller browser window
+
 let marginXWidth = 1;
 let marginYHeight = 1;
+
 let levelWasLoaded = false;
 let currentLevel = 1;
 const nrOfLevels = 3; //OBS, don't forget to change!!!
@@ -119,6 +121,7 @@ function loadLevel(number: number) {
         });
 
         window.addEventListener('resize', () => {
+
           calculateWinFractionAndMargins();
         });
       }
@@ -200,6 +203,25 @@ function scaleCanvasToFitScreen() {
     app.view.style.transform = `scale(${window.innerWidth / winWidth})`;
   } else {
     app.view.style.transform = 'scale(1)';
+  }
+}
+
+function checkPlayerDuckCollision(): void {
+  const playerDuckVector = {
+    x: physicsObjs[1].position.x - physicsObjs[0].position.x,
+    y: physicsObjs[1].position.y - physicsObjs[0].position.y,
+  };
+  const playerDuckDist = Math.sqrt(
+    playerDuckVector.x * playerDuckVector.x +
+      playerDuckVector.y * playerDuckVector.y
+  );
+  if (playerDuckDist <= 80) {
+    if (currentLevel < nrOfLevels) {
+      currentLevel++;
+      loadLevel(currentLevel);
+    } else {
+      currentLevel = 0;
+    }
   }
 }
 
