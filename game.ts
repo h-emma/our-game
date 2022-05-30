@@ -12,8 +12,10 @@ const menuContainer = new Container();
 const winWidth = 1200;
 const winHeight = 640;
 let winScaleFraction = 1; //The amount the canvas is scaled when smaller browser window
-let marginXWidth = (window.innerWidth - winWidth) / 2;
-let marginYHeight = (window.innerHeight - winHeight) / 2;
+
+let marginXWidth = 1;
+let marginYHeight = 1;
+
 let levelWasLoaded = false;
 let currentLevel = 1;
 const nrOfLevels = 3; //OBS, don't forget to change!!!
@@ -98,6 +100,8 @@ function loadLevel(number: number) {
         app.stage.addChild(obj.sprite);
       });
 
+      calculateWinFractionAndMargins();
+
       //mute sound sprite
       if (!muteIcon) {
         muteIcon = Sprite.from('/images/VolumeMuted.png');
@@ -117,17 +121,20 @@ function loadLevel(number: number) {
         });
 
         window.addEventListener('resize', () => {
-          if (window.innerWidth < winWidth) {
-            marginXWidth = 0;
-            winScaleFraction = window.innerWidth / winWidth;
-          } else {
-            marginXWidth = (window.innerWidth - winWidth) / 2;
-          }
-          marginYHeight =
-            (window.innerHeight - winHeight * winScaleFraction) / 2;
+          calculateWinFractionAndMargins();
         });
       }
     });
+}
+
+function calculateWinFractionAndMargins() {
+  if (window.innerWidth < winWidth) {
+    marginXWidth = 0;
+    winScaleFraction = window.innerWidth / winWidth;
+  } else {
+    marginXWidth = (window.innerWidth - winWidth) / 2;
+  }
+  marginYHeight = (window.innerHeight - winHeight * winScaleFraction) / 2;
 }
 
 app.ticker.add(() => {
@@ -192,9 +199,9 @@ function checkCollisions(): void {
 
 function scaleCanvasToFitScreen() {
   if (window.innerWidth < winWidth) {
-    app.view.style.scale = `${window.innerWidth / winWidth}`;
+    app.view.style.transform = `scale(${window.innerWidth / winWidth})`;
   } else {
-    app.view.style.scale = '1';
+    app.view.style.transform = 'scale(1)';
   }
 }
 
