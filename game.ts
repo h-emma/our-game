@@ -121,7 +121,6 @@ function loadLevel(number: number) {
         });
 
         window.addEventListener('resize', () => {
-
           calculateWinFractionAndMargins();
         });
       }
@@ -203,25 +202,6 @@ function scaleCanvasToFitScreen() {
     app.view.style.transform = `scale(${window.innerWidth / winWidth})`;
   } else {
     app.view.style.transform = 'scale(1)';
-  }
-}
-
-function checkPlayerDuckCollision(): void {
-  const playerDuckVector = {
-    x: physicsObjs[1].position.x - physicsObjs[0].position.x,
-    y: physicsObjs[1].position.y - physicsObjs[0].position.y,
-  };
-  const playerDuckDist = Math.sqrt(
-    playerDuckVector.x * playerDuckVector.x +
-      playerDuckVector.y * playerDuckVector.y
-  );
-  if (playerDuckDist <= 80) {
-    if (currentLevel < nrOfLevels) {
-      currentLevel++;
-      loadLevel(currentLevel);
-    } else {
-      currentLevel = 0;
-    }
   }
 }
 
