@@ -204,9 +204,9 @@ function checkCollisions(): void {
 
 function scaleCanvasToFitScreen() {
   if (window.innerWidth < winWidth) {
-    app.view.style.scale = `${window.innerWidth / winWidth}`;
+    app.view.style.transform = `scale(${window.innerWidth / winWidth})`;
   } else {
-    app.view.style.scale = '1';
+    app.view.style.transform = `scale(1)`;
   }
 }
 
