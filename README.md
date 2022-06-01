@@ -32,9 +32,19 @@ If you want to play this incredible game, you can visit this [website](https://y
 -   (https://github.com/h-emma/our-game/pull/4) Add player class
 -   (https://github.com/h-emma/our-game/pull/2) Add setup and test assets
 
-# Code Review
+# Code Review by Alice Nyberg and Nelly Petrén
 
-1. `example.js:10-15` - Remember to think about X and this could be refactored using the amazing Y function.
+1. `Game.ts:21` - A comment about not forgetting to change the number of levels. Did your remember to change?
+2. `General`- Very clean code, looks like you’ve managed to remove al lot unnecessary/unused things!
+3. `General`- Would have liked to see some comments, just to make it a bit easier for an outsider of lower level to be able to see what’s going on in the code :)
+4. `General`- You’ve managed to break out a lot of the code, which makes it easier to navigate. Good job!
+5. `Classes/SpringCircle.ts:92-93` - A lot of your functions have explanatory names, this one is just named clamp. A comment or a more specific name could have helped!
+6. `Classes/SpringCircle.ts:80-90` - Same here! You get an estimation of what the function does (collisionTint: change color of the bubbles on collision?) but a comment would have made it clearer!
+7. `Classes/SpringCircle.ts:47-63` - Again. Not 100 % sure what the function (spring) does. Add bounce to the bubbles on impact maybe? A small comment could have put it all in to context easier!
+8. `README.md` - The installation guide could contain a bit more information, maybe add a link on how to install nodeJS?
+9. `README.md`- Also in the installation guide, to start the server with “npm run dev” doesn’t work if you only follow the guide.
+10. `General` - Would have been fun with a feature that makes it possible to lose the game! Maybe have the yrgonaut catch the duck in a specifik time or have the duck move around a bit more?
+11. super fun and cute game! love the yrgo theme! good job!
 
 # Testers
 
