@@ -15,6 +15,12 @@ If you want to play this incredible game, you can visit this [website](https://y
 
 # Changelog
 
+-   (https://github.com/h-emma/our-game/pull/27) Update readme
+-   (https://github.com/h-emma/our-game/pull/26) Fix random start position and add levels
+-   (https://github.com/h-emma/our-game/pull/25) Add code review
+-   (https://github.com/h-emma/our-game/pull/24) Fix scaling
+-   (https://github.com/h-emma/our-game/pull/23) Fix responsive mute button (works on Chrome)
+-   (https://github.com/h-emma/our-game/pull/22) Fix responsive mute button (do not work on Chrome)
 -   (https://github.com/h-emma/our-game/pull/21) Update readme and license
 -   (https://github.com/h-emma/our-game/pull/20) Fix error regarding Vector2
 -   (https://github.com/h-emma/our-game/pull/19) Update size on player and spring circle
@@ -50,14 +56,12 @@ If you want to play this incredible game, you can visit this [website](https://y
 
 Tested by the following people:
 
-1. Jane Doe
-2. John Doe
-3. Jane Doe
-4. John Doe
+1. Johanna and Anton
+2. Sofia and Sophie
 
 Tested by the following muggles (non-coders):
 
-1. Jane Doe
-2. John Doe
-3. Jane Doe
-4. John Doe
+1. Peter
+2. Sara
+3. Sara
+4. Erik
