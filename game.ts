@@ -18,7 +18,7 @@ let marginYHeight = 1;
 
 let levelWasLoaded = false;
 let currentLevel = 1;
-const nrOfLevels = 3; //OBS, don't forget to change!!!
+const nrOfLevels = 6; //OBS, don't forget to change!!!
 let muteIcon: Sprite;
 
 document.body.appendChild(app.view);
@@ -67,12 +67,62 @@ function loadLevel(number: number) {
   fetch(`/levels/level${number}.json`)
     .then((response) => response.json())
     .then((levelData) => {
+      let playerRandomPos: Vector2 = {
+        x: 40 + Math.random() * (winWidth - 80),
+        y: 40 + Math.random() * (winHeight - 80),
+      };
+      let duckRandomPos: Vector2 = {
+        x: 40 + Math.random() * (winWidth - 80),
+        y: 40 + Math.random() * (winHeight - 80),
+      };
+
+      let duckPlayerVector: Vector2 = {
+        x: playerRandomPos.x - duckRandomPos.x,
+        y: playerRandomPos.y - duckRandomPos.y,
+      };
+
+      let magnitude: number = Math.sqrt(
+        duckPlayerVector.x * duckPlayerVector.x +
+          duckPlayerVector.y * duckPlayerVector.y
+      );
+
+      while (magnitude < 600) {
+        playerRandomPos = {
+          x: 40 + Math.random() * (winWidth - 80),
+          y: 40 + Math.random() * (winHeight - 80),
+        };
+        duckRandomPos = {
+          x: 40 + Math.random() * (winWidth - 80),
+          y: 40 + Math.random() * (winHeight - 80),
+        };
+
+        duckPlayerVector = {
+          x: playerRandomPos.x - duckRandomPos.x,
+          y: playerRandomPos.y - duckRandomPos.y,
+        };
+
+        magnitude = Math.sqrt(
+          duckPlayerVector.x * duckPlayerVector.x +
+            duckPlayerVector.y * duckPlayerVector.y
+        );
+      }
+
       physicsObjs.push(
-        new Player({ x: 100, y: 100 }, 40, '/images/YrgonautInBubble.png', 2)
+        new Player(
+          { x: playerRandomPos.x, y: playerRandomPos.y },
+          40,
+          '/images/YrgonautInBubble.png',
+          2
+        )
       );
 
       physicsObjs.push(
-        new Duck({ x: 900, y: 550 }, 30, '/images/Duck.png', 0.2)
+        new Duck(
+          { x: duckRandomPos.x, y: duckRandomPos.y },
+          30,
+          '/images/Duck.png',
+          0.2
+        )
       );
       physicsObjs[physicsObjs.length - 1].addForce({
         x: Math.random() * 4 - 2,
